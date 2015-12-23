@@ -11,6 +11,9 @@ import sys
 import random
 
 import os, errno
+import time
+
+from jinja2 import Environment, loaders
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -65,18 +68,16 @@ def mkdir_p(path):
       pass
     else: raise
 
-def write_html(str, filepath):
-  Html_file = open(filepath, "w")
-  Html_file.write(str)
-  Html_file.close()
-  
-def append_html(str, filepath):
-  Html_file = open(filepath, "a")
-  Html_file.write(str)
-  Html_file.close()
+def write_html(template_name, render_data, html_path):
+  env = Environment(loader=loaders.FileSystemLoader("/var/www/html/__templates__"))
+  tmpl = env.get_template(template_name)
+  output = tmpl.render(data = render_data).encode('utf8')
+  with open(html_path, "wb") as fh:
+    fh.write(output)
 
 def get_json():
   xlog("start")
+  image_list = []
   for offset in range(0, 1000):
     #http://www.xuanran001.com/api/getdesignlist.html?key=crziu5s9omlqiqxaqyyn&offset=0&limit=10
     url = URL + "&limit=1&offset=" + str(offset)
@@ -89,7 +90,6 @@ def get_json():
     image_url = res["Result"][0]["image"]
     thumbnail_url = res["Result"][0]["thumbnail"]
     
-    
     if check404(image_url):
       continue
     if check404(thumbnail_url):
@@ -100,29 +100,19 @@ def get_json():
     html_url = "repo/" + uuid + "/image.html"
     mkdir_p(resource_dir)
     
-    html_str = """
-<html>
-<head>
-<title>效果图</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, minimum-scale=0.1">
-</head>
-<body style="margin: 0px;">
-<img style="-webkit-user-select: none" src="%s">
-</body>
-</html>
-""" % image_url
+    image_data = {
+      "image_url": image_url
+    }
     
     # /repo/4951b757-7b4d-4234-bf00-732d2da77717/image.html
-    write_html(html_str, resource_dir + "/image.html")
+    write_html("image.html", image_data, os.path.join(resource_dir, "image.html"))
     
     #@TODO check 404 on res["Result"][0]["image"]
-    html_str = '<div class="box photo col3"><a href="'
-    html_str += html_url
-    html_str += '" title="效果图"><img src="'
-    html_str += thumbnail_url
-    html_str += '" /></div>'
-    append_html(html_str, WWWROOT + "/index.html")
+    image_list.append({
+      "html_url": html_url,
+      "thumbnail_url": thumbnail_url
+    })
+  return image_list
 
 def main():
 
@@ -150,188 +140,7 @@ def main():
   #logger.error('error message')
   #logger.critical('critical message')
   
-  
-  html_str = """
-<!DOCTYPE HTML>
-
-<head>
-
-    <title>效果图360全景</title>
-    <meta name="keywords" content="效果图 全景效果图 360效果图">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    
-<!-- Google Fonts -->
-
-    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>-->
-
-<!-- CSS Files -->
-
-    <link rel="stylesheet" type="text/css" media="screen" href="style.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="menu/css/simple_menu.css">
-  
-<!-- JS Files -->
-
-    <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
-
-    
-    <!-- Masonry -->
-    
-	<script src="js/jquery.masonry.min.js"></script>
-    
-    <script>
-      $(function(){
-    
-        var $container = $('#container');
-      
-        $container.imagesLoaded( function(){
-          $container.masonry({
-            itemSelector : '.box',
-			isFitWidth: true,
-			isAnimated: true
-          });
-        });
-      
-      });
-    </script>
-    
-
-
-</head>
-
-<body>
-
-    <div class="header" style="display: none;">
-    
-    <div id="site_title"><a href="index.html"><img src="img/logo.png" /></a></div>
-
-    <!-- Main Menu -->
-    
-    <ol id="menu">
-             <li class="active_menu_item"><a href="index.html">Home</a>
-        
-              <!-- sub menu -->
-              <ol> 
-                <li><a href="product_viewer.html">Product Viewer</a></li> 
-                <li><a href="nivo.html">Nivo Slider</a></li>
-                <li><a href="ei_slider.html">EI Slider</a></li>
-                <li><a href="fullscreen_gallery.html">Fullscreen Slider</a></li>
-                <li><a href="image_frontpage.html">Static Image</a></li>
-              </ol>
-              </li><!-- END sub menu -->
-        
-        <li><a href="#">Pages</a>
-        
-              <!-- sub menu -->
-              <ol>    
-                <li><a href="single_coupon.php">Coupon</a></li> 
-                <li><a href="magazine.html">Magazine</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="full-width.html">Full Width Page</a></li>
-                <li><a href="columns.html">Columns</a></li>
-              </ol>
-        </li><!-- END sub menu -->
-        
-        <li><a href="elements.html">Elements</a></li>
-              
-        <li><a href="#">Galleries</a>
-        
-              <!-- sub menu -->
-              <ol>     
-                <li><a href="gallery-simple.html">Simple</a></li>
-                <li><a href="portfolio.html">Filterable</a></li>
-                <li><a href="gallery_fader.html">Fade Scroll</a></li>
-                <li><a href="video.html">Video</a></li>
-                <li class="last"><a href="photogrid.html">PhotoGrid</a></li>
-              </ol>
-        </li><!-- END sub menu -->
-        
-               <li><a href="contact.html">Contact</a></li>
-    </ol>
-    
-    
-    </div><!-- END header -->
-
-    <div id="container" style="background-color: rgba(0,0,0,0.2);">
-
-    <!--<div class="box photo col3">
-    <div class="discount_value">15%</div>
-      <a href="single_coupon.php" title="Photo by Dieter Schneider"><img src="img/masonry/4.jpg" alt="Stanley" /></a>
-      <h3>Studio Photography</h3>
-    </div>-->
-"""
-  write_html(html_str, WWWROOT + "/index.html")
-  
-  get_json()
-  
-  html_str = """
-
-
-    <div style="clear:both; height: 40px"></div>
-    </div>
-
-    <!-- END container -->
-    
-    
-    <div id="footer" style="display: none;">
-
-    <!-- First Column -->
-
-    <div class="one-fourth">
-        <h3>Useful Links</h3>
-            <ul class="footer_links">
-                <li><a href="#">Lorem Ipsum</a></li>
-                <li><a href="#">Ellem Ciet</a></li>
-                <li><a href="#">Currivitas</a></li>
-                <li><a href="#">Salim Aritu</a></li>
-            </ul>
-    </div>
-    
-    <!-- Second Column -->
-    
-    <div class="one-fourth">
-        <h3>Terms</h3>
-            <ul class="footer_links">
-                <li><a href="#">Lorem Ipsum</a></li>
-                <li><a href="#">Ellem Ciet</a></li>
-                <li><a href="#">Currivitas</a></li>
-                <li><a href="#">Salim Aritu</a></li>
-            </ul>
-    </div>
-    
-    <!-- Third Column -->
-    
-    <div class="one-fourth">
-        <h3>Information</h3>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sit amet enim id dui tincidunt vestibulum rhoncus a felis.
-        
-        <div id="social_icons">
-        Copyright &copy; 2014.Company name All rights reserved.<a target="_blank" href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
-        </div>
-        
-    </div>
-    
-    <!-- Fourth Column -->
-    
-    <div class="one-fourth last">
-        <h3>Socialize</h3>
-            <img src="img/icon_fb.png" alt="Facebook">
-            <img src="img/icon_twitter.png" alt="Facebook">
-            <img src="img/icon_in.png" alt="Facebook">
-    </div>
-
-    <div style="clear:both"></div>
-    
-    </div> <!-- END footer -->
-
-
-
-
-</body>
-</html>
-"""
-  append_html(html_str, WWWROOT + "/index.html")
-  
-  
+  write_html("index.html", get_json(), os.path.join(WWWROOT, "index.html"))
 
 if __name__ == '__main__':
   main()
