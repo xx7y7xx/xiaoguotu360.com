@@ -69,7 +69,7 @@ def mkdir_p(path):
     else: raise
 
 def write_html(template_name, render_data, html_path):
-  env = Environment(loader=loaders.FileSystemLoader("/var/www/html/__templates__"))
+  env = Environment(loader=loaders.FileSystemLoader("/root/xiaoguotu360.com/res/templates"))
   tmpl = env.get_template(template_name)
   output = tmpl.render(data = render_data).encode('utf8')
   with open(html_path, "wb") as fh:
