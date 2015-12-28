@@ -20,7 +20,8 @@ sys.setdefaultencoding('utf8')
 
 KEY = "crziu5s9omlqiqxaqyyn"
 DOMAIN = "http://www.xuanran001.com/api"
-URL = "%s/getdesignlist.html?key=%s&size=big" %(DOMAIN, KEY)
+URL_xiaoguotu = "%s/getdesignlist.html?key=%s&size=big" %(DOMAIN, KEY)
+URL_quanjingtu = "%s/pano/list.html?key=%s" %(DOMAIN, KEY)
 
 WWWROOT = "/var/www/html"
 REPO = WWWROOT + "/repo"
@@ -75,12 +76,51 @@ def write_html(template_name, render_data, html_path):
   with open(html_path, "wb") as fh:
     fh.write(output)
 
-def get_json():
+def get_xiaoguotu_json():
   xlog("start")
   image_list = []
   for offset in range(0, 1000):
     #http://www.xuanran001.com/api/getdesignlist.html?key=crziu5s9omlqiqxaqyyn&offset=0&limit=10
-    url = URL + "&limit=1&offset=" + str(offset)
+    url = URL_xiaoguotu + "&limit=1&offset=" + str(offset)
+    xlog("url: " + url)
+    res = getjson(url)
+    #with open("/var/www/html/data/" + str(offset) + '.json', 'w') as outfile:
+    #  json.dump(res, outfile)
+    
+    uuid = res["Result"][0]["id"]
+    image_url = res["Result"][0]["image"]
+    thumbnail_url = res["Result"][0]["thumbnail"]
+    
+    if check404(image_url):
+      continue
+    if check404(thumbnail_url):
+      continue
+    
+    resource_dir = REPO + "/" + uuid
+    html_path = resource_dir + "/image.html"
+    html_url = "repo/" + uuid + "/image.html"
+    mkdir_p(resource_dir)
+    
+    image_data = {
+      "image_url": image_url
+    }
+    
+    # /repo/4951b757-7b4d-4234-bf00-732d2da77717/image.html
+    write_html("image.html", image_data, os.path.join(resource_dir, "image.html"))
+    
+    #@TODO check 404 on res["Result"][0]["image"]
+    image_list.append({
+      "html_url": html_url,
+      "thumbnail_url": thumbnail_url
+    })
+  return image_list
+
+def get_quanjingtu_json():
+  xlog("start")
+  image_list = []
+  for offset in range(0, 1000):
+    #http://www.xuanran001.com/api/getdesignlist.html?key=crziu5s9omlqiqxaqyyn&offset=0&limit=10
+    url = URL_quanjingtu + "&limit=1&offset=" + str(offset)
     xlog("url: " + url)
     res = getjson(url)
     #with open("/var/www/html/data/" + str(offset) + '.json', 'w') as outfile:
@@ -140,7 +180,8 @@ def main():
   #logger.error('error message')
   #logger.critical('critical message')
   
-  write_html("index.html", get_json(), os.path.join(WWWROOT, "index.html"))
+  write_html("index.html", get_xiaoguotu_json(), os.path.join(WWWROOT, "index.html"))
+  write_html("xiaoguotu.html", get_xiaoguotu_json(), os.path.join(WWWROOT, "xiaoguotu.html"))
 
 if __name__ == '__main__':
   main()

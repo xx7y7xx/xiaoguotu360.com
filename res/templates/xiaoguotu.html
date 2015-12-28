@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+
+<head>
+
+    <title>效果图360全景</title>
+
+<meta name="keywords" content="装修效果图大全2015图片,室内装修效果图,家庭装修设计,家居装 修效果图,装修图片网,客厅、卧室、电视背景墙、厨房、小户型装修效果图大全,全景效果图,360效果图" />
+<meta name="description" content="提供国内外室内装修效果图上百万套，包含新款家居装饰搭配图片及客厅、卧室、电视墙、卫生间等各类2015装修效果图大全。" />
+
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+<!-- Google Fonts -->
+
+    <!--<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>-->
+
+<!-- CSS Files -->
+
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="menu/css/simple_menu.css">
+    <link rel="stylesheet" href="css/prettyPhoto.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/nivo-slider.css" type="text/css" media="screen"/>
+
+<!-- JS Files -->
+
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+    
+    <script type="text/javascript" src="js/custom.js"></script>
+    <script type="text/javascript" src="js/slides/slides.min.jquery.js"></script>
+    <script type="text/javascript" src="js/cycle-slider/cycle.js"></script>
+    <script type="text/javascript" src="js/nivo-slider/jquery.nivo.slider.js"></script>
+    <script type="text/javascript" src="js/tabify/jquery.tabify.js"></script>
+    <script type="text/javascript" src="js/prettyPhoto/jquery.prettyPhoto.js"></script>
+    <script type="text/javascript" src="js/twitter/jquery.tweet.js"></script>
+    <script type="text/javascript" src="js/scrolltop/scrolltopcontrol.js"></script>
+    <script type="text/javascript" src="js/portfolio/filterable.js"></script>
+    <script type="text/javascript" src="js/modernizr/modernizr-2.0.3.js"></script>
+    <script type="text/javascript" src="js/easing/jquery.easing.1.3.js"></script>
+    <script type="text/javascript" src="js/kwicks/jquery.kwicks-1.5.1.pack.js"></script>
+    <script type="text/javascript" src="js/swfobject/swfobject.js"></script>
+    <!-- FancyBox -->
+    <link rel="stylesheet" type="text/css" href="js/fancybox/jquery.fancybox.css" media="all">
+    <script type="text/javascript" src="js/fancybox/jquery.fancybox-1.2.1.js"></script>
+
+</head>
+
+<body>
+
+    <div class="header">
+    
+    <div id="site_title"><a href="index.html"><img src="img/logo.png" /></a></div>
+
+    <!-- Main Menu -->
+    
+    <ol id="menu">
+             <li class="active_menu_item"><a href="index.html">首页</a>
+        
+              <!-- sub menu -->
+              <!--<ol> 
+                <li><a href="product_viewer.html">Product Viewer</a></li> 
+                <li><a href="nivo.html">Nivo Slider</a></li>
+                <li><a href="ei_slider.html">EI Slider</a></li>
+                <li><a href="fullscreen_gallery.html">Fullscreen Slider</a></li>
+                <li><a href="image_frontpage.html">Static Image</a></li>
+              </ol>-->
+              </li><!-- END sub menu -->
+        
+        <li><a href="quanjingtu.html">全景360</a>
+        
+              <!-- sub menu -->
+              <!--<ol>    
+                <li><a href="single_coupon.php">Coupon</a></li> 
+                <li><a href="magazine.html">Magazine</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="full-width.html">Full Width Page</a></li>
+                <li><a href="columns.html">Columns</a></li>
+              </ol>-->
+        </li><!-- END sub menu -->
+        
+        <li><a href="elements.html">Elements</a></li>
+              
+        <li><a href="xiaoguotu.html">家装效果图</a>
+        
+              <!-- sub menu -->
+              <!--<ol>     
+                <li><a href="gallery-simple.html">Simple</a></li>
+                <li><a href="portfolio.html">Filterable</a></li>
+                <li><a href="gallery_fader.html">Fade Scroll</a></li>
+                <li><a href="video.html">Video</a></li>
+                <li class="last"><a href="photogrid.html">PhotoGrid</a></li>
+              </ol>-->
+        </li><!-- END sub menu -->
+        
+               <!--<li><a href="contact.html">Contact</a></li>-->
+    </ol>
+
+<p>提供国内外室内装修效果图上百万套，包含新款家居装饰搭配图片及客厅、卧室、电视墙、卫生间等各类2015装修效果图大全。</p>
+    
+    </div><!-- END header -->
+
+    <div id="container">
+    
+    
+    <h1>效果图</h1>
+
+    {% for item in data %}
+				<div class="one-fifth">
+					<p>
+						<a href="{{ item.html_url }}" class="portfolio-item-preview" data-rel="prettyPhoto">
+							<img src="{{ item.thumbnail_url }}" alt="效果图" width="158" height="100" class="portfolio-img pretty-box"/>
+						</a>
+					</p>
+				</div>
+    {% endfor %}
+
+<div style="clear:both; height: 40px"></div>
+
+</div><!-- close container -->
+
+
+
+</body>
+</html>
