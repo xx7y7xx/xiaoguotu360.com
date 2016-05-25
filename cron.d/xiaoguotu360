@@ -1,0 +1,2 @@
+0 * * * * root python /root/xiaoguotu360.com/__get__.py &>> /var/log/xxd3vin_get.log
+* * * * * root bash -ex /var/www/html/__xuanran001__/xuanran001_perf.sh &>> /var/log/xuanran001_perf.log

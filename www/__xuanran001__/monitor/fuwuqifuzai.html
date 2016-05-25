@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+<title>Load of all servers</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script src="//libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+<script src="//xuanran001.com/libs/dygraph/dygraph-combined-dev.js"></script>
+<style>
+img {
+  max-width: 100%;
+}
+.cp {
+  position: fixed;
+  right: 0;
+  border: 1px solid #ccc;
+  width: 200px;
+  height: 50px;
+}
+.reload-btn {
+  width: 200px;
+  height: 50px;
+  font-size: 30px;
+}
+</style>
+<script>
+// Clear cache
+function cc (url) {
+  return url + "?_=" + (new Date().getTime());
+}
+
+function hereDoc(f) {
+  return f.toString()
+    .replace(/^[^\/]+\/\*!?/, '')
+    .replace(/\*\/[^\/]+$/, '');
+}
+
+
+</script>
+<script>
+$(function() {
+  var URL_ROOT = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor";
+  var server_list = [{
+    ip: "192.168.0.58",
+    type: ""
+  }, {
+    ip: "192.168.0.61",
+    type: ""
+  }, {
+    ip: "192.168.0.60",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.62",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.64",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.65",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.66",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.67",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.68",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.70",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.71",
+    type: "gluenode"
+  }, {
+    ip: "192.168.0.21",
+    type: "datacenter"
+  }, {
+    ip: "192.168.0.22",
+    type: "datacenter"
+  }, {
+    ip: "192.168.0.23",
+    type: "datacenter"
+  }, {
+    ip: "192.168.0.24",
+    type: "datacenter"
+  }, {
+    ip: "192.168.0.59",
+    type: ""
+  }, {
+//    ip: "192.168.0.174",
+//    type: "handler"
+//  }, {
+    ip: "192.168.0.175",
+    type: "handler"
+  }, {
+    ip: "192.168.0.176",
+    type: "handler"
+  }, {
+    ip: "192.168.0.177",
+    type: "handler"
+  }, {
+    ip: "192.168.0.178",
+    type: "handler"
+  }, {
+    ip: "192.168.0.179",
+    type: "handler"
+  }, {
+    ip: "192.168.0.180",
+    type: "handler"
+  }, {
+    ip: "192.168.0.181",
+    type: "handler"
+  }, {
+    ip: "192.168.0.182",
+    type: "handler"
+  }, {
+    ip: "192.168.0.183",
+    type: "handler"
+  }, {
+    ip: "192.168.0.184",
+    type: "handler"
+  }, {
+    ip: "192.168.0.185",
+    type: "handler"
+  }, {
+    ip: "192.168.0.186",
+    type: "handler"
+  }, {
+    ip: "192.168.0.187",
+    type: "handler"
+  }, {
+    ip: "192.168.0.188",
+    type: "handler"
+  }, {
+    ip: "192.168.2.21",
+    type: ""
+  }, {
+    ip: "192.168.0.7",
+    type: ""
+  }];
+
+  // Processing param
+  var server_type = getHashValue("type");
+
+  var i, s, ip_list = [];
+  for (i in server_list) {
+    s = server_list[i];
+    if (server_type && s.type != server_type) continue;
+    ip_list.push(s.ip);
+  }
+
+  var ip, conf, url_root, urls = [];
+  for (i in ip_list) {
+    ip = ip_list[i];
+
+    url_root = URL_ROOT;
+    if (ip == "192.168.0.7") {
+      url_root = "http://192.168.0.7/monitor";
+    }
+
+    conf = {};
+    conf.ip = ip;
+    conf.log_url = url_root + "/log/" + ip;
+    conf.plot_url = url_root + "/plot/" + ip + "/load";
+    conf.plot = "today.png";
+    conf.logs= [{
+      title: "cpu_load_log",
+      file: "cpu_load.log"
+    }, {
+      title: "cpu_usage_log",
+      file: "cpu_usage.log"
+    }, {
+      title: "mem_usage_log",
+      file: "mem_usage.log"
+    }, {
+      title: "monitor_log",
+      file: "monitor.log"
+    }];
+
+    urls.push(conf);
+  }
+
+  var list = "";
+  var item, plot_url, title, j, log, log_url;
+  for ( i in urls )
+  {
+    item = urls[i];
+    title = item.ip + " cpu load and memory usage.";
+    plot_url = item.plot_url + "/" + item.plot;
+    list += "<h5>";
+    list += '<a href="./fuwuqifuzaixiangqing.html#ip=' + item.ip + '">' + title + '</a>';
+
+    // Append log file links
+    for ( j in item.logs ) {
+      log = item.logs[j];
+      log_url = item.log_url + "/" + log.file;
+      list += ' | <a href="view-source:' + cc(log_url) + '" data-url="' + log_url + '">' + log.title + '</a> ';
+    }
+
+    list += "</h5>\n";
+    list += '<p class="plot" data-url="' + plot_url + '"><a href="' + cc(plot_url) + '"><img src="' + cc(plot_url)  + '" /></a></p>\n';
+  }
+  $(".list").html(list);
+
+  $(".reload-btn").click(function () {
+    // Reload resource of every images and a tags.
+    $(".plot").each(function (key, val) {
+      var p = $(this);
+      var url = cc(p.data("url"));
+      p.find("img").attr("src", url);
+      p.find("a").attr("href", url);
+    });
+  });
+});
+
+$(function () {
+  //Nov-03-17:56:01 1.30 1.44 1.22 4/399 45647
+  var log;
+  log = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor/log/192.168.0.68/cpu_load.log";
+  log = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor/log/192.168.0.68/cpu_usage.log";
+  log = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor/log/192.168.0.66/sling_thread_status.log.jsonp?1";
+  $("input[type=checkbox]").click(function() {
+    var json = {
+      "All": 0,
+      "GET": 1,
+      "POST": 2,
+      "BLOCKED": 3,
+      "WAITING": 4
+    };
+    sling_plot[$(this).data("ip")].setVisibility(json[$(this).data("series")], this.checked);
+  });
+});
+
+sling_plot = {};
+
+function _sling_thread_status(ip, data) {
+  if (!data) return;
+
+  var start = new Date();                                                        
+  start.setHours(0,0,0,0);                                                       
+                                                                                 
+  var end = new Date();                                                          
+  end.setHours(23,59,59,999);
+
+  sling_plot[ip] = new Dygraph(
+    document.getElementById(ip),
+    data,
+    {
+      //customBars: true,
+      delimiter: " ",
+      dateWindow: [start, end],
+      title: "Sling thread status for " + ip,
+      ylabel: 'Count',
+      legend: 'always',
+      labelsDivStyles: { 'textAlign': 'right' },
+      showRangeSelector: true
+    }
+  );
+}
+
+function getHashValue(key) {
+  var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+  return matches ? matches[1] : null;
+}
+
+$(function() {                                                                   
+  var log_url = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor/log/192.168.0.66/sling_thread_status.log.js?1234";
+  var tag = document.createElement("script");                                    
+  tag.src = cc(log_url);                                                         
+  document.body.appendChild(tag);                                                
+});
+
+</script>
+</head>
+<body>
+<div class="cp">
+  <button class="reload-btn">Reload</button>
+</div>
+<div class="list"></div>
+<div id="192.168.0.66" style="width:100%; height:300px;"></div>
+<p><b>Display: </b>
+<input type=checkbox data-ip="192.168.0.66" data-series="All" checked>
+<label> All</label>
+<input type=checkbox data-ip="192.168.0.66" data-series="GET" checked>
+<label> GET</label>
+<input type=checkbox data-ip="192.168.0.66" data-series="POST" checked>
+<label> POST</label>
+<input type=checkbox data-ip="192.168.0.66" data-series="BLOCKED" checked>
+<label> BLOCKED</label>
+<input type=checkbox data-ip="192.168.0.66" data-series="WAITING" checked>
+<label> WAITING</label>
+</p>
+<script src="//xuanran001.com/libs/date.format.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+<title>Load of singal server</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<script src="//libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
+<style>
+img {
+  max-width: 100%;
+}
+.cp {
+  position: fixed;
+  right: 0;
+  border: 1px solid #ccc;
+  width: 200px;
+  height: 50px;
+}
+.back-btn {
+  width: 200px;
+  height: 50px;
+  font-size: 30px;
+}
+</style>
+<script>
+$(function() {
+
+  var URL_ROOT = "http://xuanran001.com/public/repository/fd86/ee26/3ba7/4050/a09b/2a9f/be2f/2082/_share/monitor";
+
+  var ip = getHashValue("ip");
+  if (ip == null) {
+    alert("ip param is not optional!");
+    return;
+  }
+
+  url_root = URL_ROOT;
+  if (ip == "192.168.0.7") {
+    url_root = "http://192.168.0.7/monitor";
+  }
+
+  var days = [];
+  var today = new Date();
+
+  // List last 7 days.
+  var i, day;
+  for (i = 0; i < 7; i++) {
+    day = new Date();
+    day.setDate(today.getDate() - i)
+    day_str = day.format("yyyymmdd");
+    days.push({
+      title: day_str,
+      url: url_root + "/plot/" + ip + "/load",
+      plot: day_str + ".png",
+      logs: [{
+        title: "cpu_load_log",
+        file: "cpu_load.log"
+      }, {
+        title: "cpu_usage_log",
+        file: "cpu_usage.log"
+      }, {
+        title: "mem_usage_log",
+        file: "mem_usage.log"
+      }]
+    });
+  }
+
+  var list = "";
+  var item, plot_url, j, log, log_url;
+  for ( i in days ) {
+    item = days[i];
+    plot_url = item.url + "/" + item.plot;
+    list += "<h5>";
+    list += item.title;
+
+    // Append log file links
+    for ( j in item.logs ) {
+      log = item.logs[j];
+      log_url = item.url + "/" + log.url;
+      list += ' | <a href="' + cc(log_url) + '" data-url="' + log_url + '">' + log.title + '</a> ';
+    }
+    list += "</h5>\n";
+    list += '<p><a href="' + cc(plot_url) + '"><img src="' + cc(plot_url)  + '" data-url="' + plot_url + '" /></a></p>\n';
+  }
+  $(".list").html(list);
+
+  $(".back-btn").click(function () {
+    window.location.href = "./fuwuqifuzai.html";
+  });
+});
+
+// Clear cache
+function cc (url) {
+  return url + "?_=" + (new Date().getTime());
+}
+
+function getHashValue(key) {
+  var matches = location.hash.match(new RegExp(key+'=([^&]*)'));
+  return matches ? matches[1] : null;
+}
+
+</script>
+</head>
+<body>
+<div class="cp">
+  <button class="back-btn">Back</button>
+</div>
+<div class="list"></div>
+<script src="//xuanran001.com/libs/date.format.js"></script>
+</body>
+</html>
